@@ -1,0 +1,56 @@
+$nomention
+
+$var[token;$getVar[botToken]]
+$var[colorEmbed;a09fff]
+$if[$isNumber[$noMentionMessage[1]]==true]
+$var[targetindex;$sub[$noMentionMessage[1];1]]
+$else
+$var[targetindex;0]
+$endif
+$botTyping
+
+$try
+$httpGet[$getVar[apiDomain]/music/where?token=$var[token]&guildId=$guildID&authorId=$authorID]
+$catch
+Seems like this cannot be process.
+$error[message]
+$endtry
+
+$if[$httpResult[data;author]==]
+You must be on voice channel.
+$stop
+$endif
+
+$if[$and[$httpResult[data;data;0;client]!=;$httpResult[data;data;0;sameChannel]!=true]]
+You must be on same voice channel in <#$httpResult[data;data;0;client;id]>.
+$stop
+$endif
+
+$try
+$httpGet[$getVar[apiDomain]/music/skip?token=$var[token]&guildId=$guildID&index=$var[targetindex]]
+$catch
+Seems like this cannot be process.
+$error[message]
+$endtry
+
+$if[$httpResult[data;data;action]==skipped]
+$author[Now Playing]
+$authorIcon[$userAvatar[$botID]?size=2048]
+$title[$httpResult[data;data;currentTrack;title]]
+$embeddedURL[$httpResult[data;data;currentTrack;url]]
+$color[$var[colorEmbed]]
+$footer[$displayName - $httpResult[data;data;currentTrack;source]]
+$footerIcon[$authorAvatar?size=2048]
+$thumbnail[$httpResult[data;data;currentTrack;thumbnail]]
+$addField[Duration;$httpResult[data;data;currentTrack;duration];true]
+$else
+$if[$httpResult[data;type;alt]==inactive_queue]
+Nothing is playing.
+$elseif[$httpResult[data;type;alt]==empty_queue]
+Nothing to skip.
+$else
+$httpResult[data;message]
+$httpResult[error;message]
+$endif
+
+$endif

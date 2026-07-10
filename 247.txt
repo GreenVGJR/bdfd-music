@@ -1,0 +1,49 @@
+$nomention
+
+$var[token;$getVar[botToken]]
+$var[configMusic;$getServerVar[configMusic]]
+$jsonParse[$var[configMusic]]
+$botTyping
+
+$try
+$httpGet[$getVar[apiDomain]/music/where?token=$var[token]&guildId=$guildID&authorId=$authorID]
+$catch
+Seems like this cannot be process.
+$error[message]
+$endtry
+
+$if[$httpResult[data;author]==]
+You must be on voice channel.
+$stop
+$endif
+
+$if[$and[$httpResult[data;data;0;client]!=;$httpResult[data;data;0;sameChannel]!=true]]
+You must be on same voice channel in <#$httpResult[data;data;0;client;id]>.
+$stop
+$endif
+
+$if[$json[247]==true]
+$jsonSetString[247;false]
+$else
+$jsonSetString[247;true]
+$endif
+
+$try
+$httpGet[$getVar[apiDomain]/music/247?token=$var[token]&guildId=$guildID&value=$json[247]]
+$catch
+Seems like this cannot be process.
+$error[message]
+$endtry
+
+$if[$httpResult[data;type;primary]==final]
+$if[$httpResult[data;data;is247]==true]
+24/7 Enabled
+$else
+24/7 Disabled
+$endif
+$setServerVar[configMusic;$jsonStringify]
+$else
+$httpResult[data;message]
+$httpResult[error;message]
+$stop
+$endif

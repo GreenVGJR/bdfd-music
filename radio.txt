@@ -1,0 +1,63 @@
+$nomention
+
+$onlyIf[$noMentionMessage[1]!=;Usage: `$commandTrigger <station name / number>`]
+
+$onlyBotPerms[connect;Missing 'Connect' Permission - <@$botID>]
+$onlyBotPerms[speak;Missing 'Speak' Permission - <@$botID>]
+
+$var[token;$getVar[botToken]]
+$var[searchQuery;$noMentionMessage]
+$var[configMusic;$getServerVar[configMusic]]
+$jsonParse[$var[configMusic]]
+$botTyping
+
+$try
+$httpGet[$getVar[apiDomain]/music/where?token=$var[token]&guildId=$guildID&authorId=$authorID]
+$catch
+Seems like this cannot be process.
+$error[message]
+$endtry
+
+$if[$httpResult[data;author]==]
+You must be on voice channel.
+$stop
+$endif
+
+$if[$and[$httpResult[data;data;0;client]!=;$httpResult[data;data;0;sameChannel]!=true]]
+You must be on same voice channel in <#$httpResult[data;data;0;client;id]>.
+$stop
+$endif
+
+$try
+$httpGet[$getVar[apiDomain]/search/radio?q=$url[Encode;$var[searchQuery]]]
+$catch
+Seems like this cannot be process.
+$error[message]
+$endtry
+
+$if[$httpResult[data;0;stationuuid]==]
+No radio stations found for `$var[searchQuery]`.
+$stop
+$endif
+
+$var[stationId;$httpResult[data;0;stationuuid]]
+$var[247;$json[247]]
+
+$try
+$httpGet[$getVar[apiDomain]/music/radio?token=$var[token]&stationId=$var[stationId]&guildId=$guildID&authorId=$authorID&247=$var[247]]
+$catch
+Seems like this cannot be process.
+$error[message]
+$endtry
+
+$if[$httpResult[data;status]==true]
+$author[Streaming Radio]
+$description[[$httpResult[data;data;track;title]\]($httpResult[data;data;track;url])]
+$color[a09fff]
+$footer[$displayName]
+$footerIcon[$authorAvatar?size=2048]
+$thumbnail[$httpResult[data;data;track;thumbnail]]
+$else
+$httpResult[data;message]
+$httpResult[error;message]
+$endif

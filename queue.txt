@@ -1,0 +1,63 @@
+$nomention
+
+$if[$isNumber[$noMentionMessage[1]]==true]
+$var[offsetPage;$multi[$sub[$noMentionMessage[1];1];10]]
+$else
+$var[offsetPage;0]
+$endif
+
+$var[token;$getVar[botToken]]
+$var[configMusic;$getServerVar[configMusic]]
+$jsonParse[$var[configMusic]]
+$botTyping
+
+$try
+$httpGet[$getVar[apiDomain]/music/where?token=$var[token]&guildId=$guildID&authorId=$authorID]
+$catch
+Seems like this cannot be process.
+$error[message]
+$endtry
+
+$if[$httpResult[data;author]==]
+You must be on voice channel.
+$stop
+$endif
+
+$if[$and[$httpResult[data;data;0;client]!=;$httpResult[data;data;0;sameChannel]!=true]]
+You must be on same voice channel in <#$httpResult[data;data;0;client;id]>.
+$stop
+$endif
+
+$try
+$httpGet[$getVar[apiDomain]/music/queue?token=$var[token]&guildId=$guildID&limit=10&offset=$var[offsetPage]]
+$catch
+Seems like this cannot be process.
+$error[message]
+$endtry
+
+$if[$httpResult[data;type;primary]==final]
+$var[listTracks;
+$if[$httpResult[data;data;tracks;0]!=] $sum[$var[offsetPage];1]. [$httpResult[data;data;tracks;0;title]\]($httpResult[data;data;tracks;0;url]) ($httpResult[data;data;tracks;0;duration]) $else No tracks on queue. $endif
+$if[$httpResult[data;data;tracks;1]!=] $sum[$var[offsetPage];2]. [$httpResult[data;data;tracks;1;title]\]($httpResult[data;data;tracks;1;url]) ($httpResult[data;data;tracks;1;duration]) $endif
+$if[$httpResult[data;data;tracks;2]!=] $sum[$var[offsetPage];3]. [$httpResult[data;data;tracks;2;title]\]($httpResult[data;data;tracks;2;url]) ($httpResult[data;data;tracks;2;duration]) $endif
+$if[$httpResult[data;data;tracks;3]!=] $sum[$var[offsetPage];4]. [$httpResult[data;data;tracks;3;title]\]($httpResult[data;data;tracks;3;url]) ($httpResult[data;data;tracks;3;duration]) $endif
+$if[$httpResult[data;data;tracks;4]!=] $sum[$var[offsetPage];5]. [$httpResult[data;data;tracks;4;title]\]($httpResult[data;data;tracks;4;url]) ($httpResult[data;data;tracks;4;duration]) $endif
+$if[$httpResult[data;data;tracks;5]!=] $sum[$var[offsetPage];6]. [$httpResult[data;data;tracks;5;title]\]($httpResult[data;data;tracks;5;url]) ($httpResult[data;data;tracks;5;duration]) $endif
+$if[$httpResult[data;data;tracks;6]!=] $sum[$var[offsetPage];7]. [$httpResult[data;data;tracks;6;title]\]($httpResult[data;data;tracks;6;url]) ($httpResult[data;data;tracks;6;duration]) $endif
+$if[$httpResult[data;data;tracks;7]!=] $sum[$var[offsetPage];8]. [$httpResult[data;data;tracks;7;title]\]($httpResult[data;data;tracks;7;url]) ($httpResult[data;data;tracks;7;duration]) $endif
+$if[$httpResult[data;data;tracks;8]!=] $sum[$var[offsetPage];9]. [$httpResult[data;data;tracks;8;title]\]($httpResult[data;data;tracks;8;url]) ($httpResult[data;data;tracks;8;duration]) $endif
+$if[$httpResult[data;data;tracks;9]!=] $sum[$var[offsetPage];10]. [$httpResult[data;data;tracks;9;title]\]($httpResult[data;data;tracks;9;url]) ($httpResult[data;data;tracks;9;duration]) $endif
+]
+$author[Queue - $httpResult[data;data;total] Songs]
+$description[$var[listTracks]]
+$color[a09fff]
+$thumbnail[$userAvatar[$authorID]?size=2048]
+$if[$httpResult[data;data;tracks;0]!=]
+$thumbnail[$httpResult[data;data;tracks;0;thumbnail]]
+$endif
+$footer[$httpResult[data;data;current;title]]
+$footerIcon[$httpResult[data;data;current;thumbnail]]
+$else
+$httpResult[data;message]
+$httpResult[error;message]
+$endif

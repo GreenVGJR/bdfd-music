@@ -1,0 +1,38 @@
+$nomention
+
+$onlyIf[$isNumber[$noMentionMessage[1]]==true;Usage: `$commandTrigger <queue index>`]
+
+$var[token;$getVar[botToken]]
+$var[targetIndex;$sub[$noMentionMessage[1];1]]
+$botTyping
+
+$try
+$httpGet[$getVar[apiDomain]/music/where?token=$var[token]&guildId=$guildID&authorId=$authorID]
+$catch
+Seems like this cannot be process.
+$error[message]
+$endtry
+
+$if[$httpResult[data;author]==]
+You must be on voice channel.
+$stop
+$endif
+
+$if[$and[$httpResult[data;data;0;client]!=;$httpResult[data;data;0;sameChannel]!=true]]
+You must be on same voice channel in <#$httpResult[data;data;0;client;id]>.
+$stop
+$endif
+
+$try
+$httpGet[$getVar[apiDomain]/music/jump?token=$var[token]&guildId=$guildID&index=$var[targetIndex]]
+$catch
+Seems like this cannot be process.
+$error[message]
+$endtry
+
+$if[$httpResult[data;type;primary]==final]
+Jumped to: `$httpResult[data;data;track;title]`
+$else
+$httpResult[data;message]
+$httpResult[error;message]
+$endif

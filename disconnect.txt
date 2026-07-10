@@ -1,0 +1,30 @@
+$nomention
+
+$var[token;$getVar[botToken]]
+$botTyping
+
+$try
+$httpGet[$getVar[apiDomain]/music/where?token=$var[token]&guildId=$guildID&authorId=$authorID]
+$catch
+Seems like this cannot be process.
+$error[message]
+$endtry
+
+$if[$and[$httpResult[data;data;0;client]!=;$httpResult[data;data;0;sameChannel]!=true]]
+You must be on same voice channel in <#$httpResult[data;data;0;client;id]>.
+$stop
+$endif
+
+$var[cachevid;$httpResult[data;data;0;client;id]]
+
+$try
+$httpGet[$getVar[apiDomain]/music/disconnect?token=$var[token]&guildId=$guildID&authorId=$authorID]
+$catch
+Seems like this cannot be process.
+$error[message]
+$endtry
+$if[$httpResult[data;status]==true]
+Disconnected from <#$var[cachevid]>.
+$else
+Already disconnect.
+$endif

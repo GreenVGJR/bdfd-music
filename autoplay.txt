@@ -1,0 +1,60 @@
+$c[Autoplay feature is using loop endpoint for avoid conflict queue system]
+$nomention
+
+$var[token;$getVar[botToken]]
+$botTyping
+
+$try
+$httpGet[$getVar[apiDomain]/music/where?token=$var[token]&guildId=$guildID&authorId=$authorID]
+$catch
+Seems like this cannot be process.
+$error[message]
+$endtry
+
+$if[$httpResult[data;author]==]
+You must be on voice channel.
+$stop
+$endif
+
+$if[$and[$httpResult[data;data;0;client]!=;$httpResult[data;data;0;sameChannel]!=true]]
+You must be on same voice channel in <#$httpResult[data;data;0;client;id]>.
+$stop
+$endif
+
+$try
+$httpGet[$getVar[apiDomain]/music/nowplaying?token=$var[token]&guildId=$guildID]
+$catch
+Seems like this cannot be process.
+$error[message]
+$endtry
+
+$if[$httpResult[data;type;primary]==final]
+$var[currentLoop;$httpResult[data;data;loop]]
+
+$if[$var[currentLoop]==autoplay]
+$var[loopMode;off]
+$else
+$var[loopMode;autoplay]
+$endif
+
+$try
+$httpGet[$getVar[apiDomain]/music/loop?token=$var[token]&guildId=$guildID&mode=$var[loopMode]]
+$catch
+Seems like this cannot be process.
+$error[message]
+$endtry
+
+$if[$httpResult[data;type;primary]==final]
+$if[$httpResult[data;data;mode]==autoplay]
+Autoplay enabled.
+$else
+Autoplay disabled.
+$endif
+$else
+$httpResult[data;message]
+$httpResult[error;message]
+$endif
+$else
+$httpResult[data;message]
+$httpResult[error;message]
+$endif

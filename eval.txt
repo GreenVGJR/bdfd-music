@@ -1,0 +1,3 @@
+$nomention
+$onlyIf[$botOwnerID==$authorID;]
+$eval[$message]

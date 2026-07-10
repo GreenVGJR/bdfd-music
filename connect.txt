@@ -1,0 +1,34 @@
+$nomention
+
+$onlyBotPerms[connect;Missing 'Connect' Permission - <@$botID>]
+
+$var[token;$getVar[botToken]]
+$botTyping
+
+$try
+$httpGet[$getVar[apiDomain]/music/where?token=$var[token]&guildId=$guildID&authorId=$authorID]
+$catch
+Seems like this cannot be process.
+$error[message]
+$endtry
+
+$if[$and[$httpResult[data;data;0;client]!=;$httpResult[data;data;0;sameChannel]!=true]]
+You must be on same voice channel in <#$httpResult[data;data;0;client;id]>.
+$stop
+$endif
+
+$try
+$httpGet[$getVar[apiDomain]/music/connect?token=$var[token]&guildId=$guildID&authorId=$authorID]
+$catch
+Seems like this cannot be process.
+$error[message]
+$endtry
+
+$if[$httpResult[data;type;primary]==final]
+Connected to <#$httpResult[data;data;channelId]>.
+$elseif[$httpResult[data;type;alt]==existed_voice]
+Already connected on <#$httpResult[data;data;channelId]>.
+$else
+$httpResult[data;message]
+$httpResult[error;message]
+$endif

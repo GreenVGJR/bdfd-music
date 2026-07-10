@@ -1,0 +1,64 @@
+$nomention
+
+$var[token;$getVar[botToken]]
+$var[explicitMode;$noMentionMessage[1]]
+$botTyping
+
+$try
+$httpGet[$getVar[apiDomain]/music/where?token=$var[token]&guildId=$guildID&authorId=$authorID]
+$catch
+Seems like this cannot be process.
+$error[message]
+$endtry
+
+$if[$httpResult[data;author]==]
+You must be on voice channel.
+$stop
+$endif
+
+$if[$and[$httpResult[data;data;0;client]!=;$httpResult[data;data;0;sameChannel]!=true]]
+You must be on same voice channel in <#$httpResult[data;data;0;client;id]>.
+$stop
+$endif
+
+$try
+$httpGet[$getVar[apiDomain]/music/nowplaying?token=$var[token]&guildId=$guildID]
+$catch
+Seems like this cannot be process.
+$error[message]
+$endtry
+
+$if[$httpResult[data;type;primary]==final]
+$var[currentLoop;$httpResult[data;data;loop]]
+
+$if[$var[explicitMode]!=]
+$var[loopMode;$var[explicitMode]]
+$else
+$if[$var[currentLoop]==off]
+$var[loopMode;track]
+$elseif[$var[currentLoop]==track]
+$var[loopMode;queue]
+$elseif[$var[currentLoop]==queue]
+$var[loopMode;off]
+$else
+$var[loopMode;off]
+$endif
+$endif
+
+$try
+$httpGet[$getVar[apiDomain]/music/loop?token=$var[token]&guildId=$guildID&mode=$url[Encode;$var[loopMode]]]
+$catch
+Seems like this cannot be process.
+$error[message]
+$endtry
+
+$if[$httpResult[data;type;primary]==final]
+Loop mode: `$httpResult[data;data;mode]`.
+$else
+$httpResult[data;message]
+$httpResult[error;message]
+$endif
+$else
+$httpResult[data;message]
+$httpResult[error;message]
+$endif
