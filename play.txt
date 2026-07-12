@@ -33,7 +33,7 @@ $c[Default Config Music]
 $var[247;$json[247]] $c[Always stay on voice channel if its true. for toggle this run: <prefix>247]
 $var[platform;$json[platform]] $c[Search provider: youtube, youtubemusic, soundcloud, spotify, applemusic, deezer, tidal]
 $var[fallbackMetadata;true] $c[Re-attempt play from different source]
-$var[vcStatus;$json[vcstatus]] $c[Show status content playing on voice channel if its true]
+$var[vcStatus;true] $c[Show status content playing on voice channel if its true]
 $var[vcStatus-start;🎵 {author} - {title}] $c[trackStart event status]
 $var[vcStatus-end;🌃 Idling...] $c[queueEnd event status, only shows with 247 enabled]
 
@@ -53,13 +53,15 @@ $else
 $author[Now Playing]
 $endif
 $authorIcon[$userAvatar[$botID]?size=2048]
-$title[$httpResult[data;data;track;title]]
-$embeddedURL[$httpResult[data;data;track;url]]
+$title[$httpResult[data;data;title]]
+$embeddedURL[$httpResult[data;data;url]]
 $color[$var[colorEmbed]]
-$footer[$displayName - $httpResult[data;data;track;source]]
+$footer[$displayName - $httpResult[data;data;source]]
 $footerIcon[$authorAvatar?size=2048]
-$thumbnail[$httpResult[data;data;track;thumbnail]]
-$addField[Duration;$httpResult[data;data;track;duration];true]
+$thumbnail[$httpResult[data;data;thumbnail]]
+$addField[Duration;$httpResult[data;data;duration];true]
+$addField[Loop;$httpResult[data;data;loop];true]
+$addField[Volume;$httpResult[data;data;volume]%;true]
 
 $if[$var[vcStatus]==true]
 $try
@@ -84,13 +86,15 @@ $else
 $author[Added to Queue]
 $endif
 $authorIcon[$userAvatar[$botID]?size=2048]
-$title[$httpResult[data;data;track;title]]
-$embeddedURL[$httpResult[data;data;track;url]]
+$title[$httpResult[data;data;title]]
+$embeddedURL[$httpResult[data;data;url]]
 $color[$var[colorEmbed]]
-$footer[$displayName - $httpResult[data;data;track;source]]
+$footer[$displayName - $httpResult[data;data;source]]
 $footerIcon[$authorAvatar?size=2048]
-$thumbnail[$httpResult[data;data;track;thumbnail]]
-$addField[Duration;$httpResult[data;data;track;duration];true]
+$thumbnail[$httpResult[data;data;thumbnail]]
+$addField[Duration;$httpResult[data;data;duration];true]
+$addField[Loop;$httpResult[data;data;loop];true]
+$addField[Volume;$httpResult[data;data;volume]%;true]
 
 $endif
 $else

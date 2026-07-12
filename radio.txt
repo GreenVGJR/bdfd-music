@@ -52,11 +52,11 @@ $endtry
 
 $if[$httpResult[data;status]==true]
 $author[Streaming Radio]
-$description[[$httpResult[data;data;track;title]\]($httpResult[data;data;track;url])]
+$description[[$httpResult[data;data;title]\]($httpResult[data;data;url])]
 $color[a09fff]
 $footer[$displayName]
 $footerIcon[$authorAvatar?size=2048]
-$thumbnail[$httpResult[data;data;track;thumbnail]]
+$thumbnail[$httpResult[data;data;thumbnail]]
 $else
 $httpResult[data;message]
 $httpResult[error;message]

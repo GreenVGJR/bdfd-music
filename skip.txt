@@ -43,6 +43,8 @@ $footer[$displayName - $httpResult[data;data;currentTrack;source]]
 $footerIcon[$authorAvatar?size=2048]
 $thumbnail[$httpResult[data;data;currentTrack;thumbnail]]
 $addField[Duration;$httpResult[data;data;currentTrack;duration];true]
+$addField[Loop;$httpResult[data;data;currentTrack;loop];true]
+$addField[Volume;$httpResult[data;data;currentTrack;volume]%;true]
 $else
 $if[$httpResult[data;type;alt]==inactive_queue]
 Nothing is playing.
