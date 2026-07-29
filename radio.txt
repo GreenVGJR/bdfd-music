@@ -16,6 +16,7 @@ $httpGet[$getVar[apiDomain]/music/where?token=$var[token]&guildId=$guildID&autho
 $catch
 Seems like this cannot be process.
 $error[message]
+$stop
 $endtry
 
 $if[$httpResult[data;author]==]
@@ -33,6 +34,7 @@ $httpGet[$getVar[apiDomain]/search/radio?q=$url[Encode;$var[searchQuery]]]
 $catch
 Seems like this cannot be process.
 $error[message]
+$stop
 $endtry
 
 $if[$httpResult[data;0;stationuuid]==]
@@ -48,6 +50,7 @@ $httpGet[$getVar[apiDomain]/music/radio?token=$var[token]&stationId=$var[station
 $catch
 Seems like this cannot be process.
 $error[message]
+$stop
 $endtry
 
 $if[$httpResult[data;status]==true]

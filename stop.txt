@@ -10,6 +10,7 @@ $httpGet[$getVar[apiDomain]/music/where?token=$var[token]&guildId=$guildID&autho
 $catch
 Seems like this cannot be process.
 $error[message]
+$stop
 $endtry
 
 $if[$httpResult[data;author]==]
@@ -27,10 +28,13 @@ $httpGet[$getVar[apiDomain]/music/stop?token=$var[token]&guildId=$guildID]
 $catch
 Seems like this cannot be process.
 $error[message]
+$stop
 $endtry
 
 $if[$httpResult[data;type;primary]==final]
+$if[$and[$json[247]==true;$json[messagestatus;1]==true]==false]
 Stopped the track. $if[$json[247]==true](24/7 Enabled)$endif
+$endif
 $else
 $httpResult[data;message]
 $httpResult[error;message]

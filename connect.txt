@@ -10,6 +10,7 @@ $httpGet[$getVar[apiDomain]/music/where?token=$var[token]&guildId=$guildID&autho
 $catch
 Seems like this cannot be process.
 $error[message]
+$stop
 $endtry
 
 $if[$and[$httpResult[data;data;0;client]!=;$httpResult[data;data;0;sameChannel]!=true]]
@@ -22,6 +23,7 @@ $httpGet[$getVar[apiDomain]/music/connect?token=$var[token]&guildId=$guildID&aut
 $catch
 Seems like this cannot be process.
 $error[message]
+$stop
 $endtry
 
 $if[$httpResult[data;type;primary]==final]

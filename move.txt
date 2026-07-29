@@ -1,9 +1,10 @@
 $nomention
 
-$onlyIf[$noMentionMessage[1]!=;Usage: `$commandTrigger <time>` (e.g., `1:30`)]
+$onlyIf[$and[$isNumber[$noMentionMessage[1]]==true;$isNumber[$noMentionMessage[2]]==true];Usage: `$commandTrigger <from> <to>`]
 
 $var[token;$getVar[botToken]]
-$var[time;$noMentionMessage[1]]
+$var[from;$sub[$noMentionMessage[1];1]]
+$var[to;$sub[$noMentionMessage[2];1]]
 $botTyping
 
 $try
@@ -25,7 +26,7 @@ $stop
 $endif
 
 $try
-$httpGet[$getVar[apiDomain]/music/seek?token=$var[token]&guildId=$guildID&time=$url[Encode;$var[time]]]
+$httpGet[$getVar[apiDomain]/music/move?token=$var[token]&guildId=$guildID&from=$var[from]&to=$var[to]]
 $catch
 Seems like this cannot be process.
 $error[message]
@@ -33,7 +34,7 @@ $stop
 $endtry
 
 $if[$httpResult[data;type;primary]==final]
-Seeked to `$httpResult[data;data;progress;current;label]` / `$httpResult[data;data;progress;total;label]`.
+Moved: `$httpResult[data;data;fromTrack;title]` → `$httpResult[data;data;toTrack;title]`
 $else
 $httpResult[data;message]
 $httpResult[error;message]

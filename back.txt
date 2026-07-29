@@ -5,12 +5,6 @@ $var[colorEmbed;a09fff]
 $var[configMusic;$getServerVar[configMusic]]
 $jsonParse[$var[configMusic]]
 
-$if[$isNumber[$noMentionMessage[1]]==true]
-$var[targetindex;$sub[$noMentionMessage[1];1]]
-$else
-$var[targetindex;0]
-$endif
-
 $botTyping
 
 $try
@@ -32,14 +26,14 @@ $stop
 $endif
 
 $try
-$httpGet[$getVar[apiDomain]/music/skip?token=$var[token]&guildId=$guildID&index=$var[targetindex]]
+$httpGet[$getVar[apiDomain]/music/back?token=$var[token]&guildId=$guildID]
 $catch
 Seems like this cannot be process.
 $error[message]
 $stop
 $endtry
 
-$if[$httpResult[data;data;action]==skipped]
+$if[$httpResult[data;data;action]==back]
 $if[$json[messagestatus;0]!=true]
 $if[$httpResult[data;data;currentTrack;is247]==true]
 $author[Now Playing - 24/7]

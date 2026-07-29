@@ -8,6 +8,7 @@ $httpGet[$getVar[apiDomain]/music/where?token=$var[token]&guildId=$guildID&autho
 $catch
 Seems like this cannot be process.
 $error[message]
+$stop
 $endtry
 
 $if[$httpResult[data;author]==]
@@ -25,6 +26,7 @@ $httpGet[$getVar[apiDomain]/music/shuffle?token=$var[token]&guildId=$guildID]
 $catch
 Seems like this cannot be process.
 $error[message]
+$stop
 $endtry
 
 $if[$httpResult[data;type;primary]==final]

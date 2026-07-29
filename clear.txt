@@ -1,9 +1,6 @@
 $nomention
 
-$onlyIf[$noMentionMessage[1]!=;Usage: `$commandTrigger <time>` (e.g., `1:30`)]
-
 $var[token;$getVar[botToken]]
-$var[time;$noMentionMessage[1]]
 $botTyping
 
 $try
@@ -25,7 +22,7 @@ $stop
 $endif
 
 $try
-$httpGet[$getVar[apiDomain]/music/seek?token=$var[token]&guildId=$guildID&time=$url[Encode;$var[time]]]
+$httpGet[$getVar[apiDomain]/music/clear?token=$var[token]&guildId=$guildID]
 $catch
 Seems like this cannot be process.
 $error[message]
@@ -33,7 +30,7 @@ $stop
 $endtry
 
 $if[$httpResult[data;type;primary]==final]
-Seeked to `$httpResult[data;data;progress;current;label]` / `$httpResult[data;data;progress;total;label]`.
+Cleared $httpResult[data;data;tracksRemoved] tracks from the queue.
 $else
 $httpResult[data;message]
 $httpResult[error;message]

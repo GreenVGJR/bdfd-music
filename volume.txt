@@ -10,6 +10,7 @@ $httpGet[$getVar[apiDomain]/music/where?token=$var[token]&guildId=$guildID&autho
 $catch
 Seems like this cannot be process.
 $error[message]
+$stop
 $endtry
 
 $if[$httpResult[data;author]==]
@@ -27,6 +28,7 @@ $httpGet[$getVar[apiDomain]/music/volume?token=$var[token]&guildId=$guildID&valu
 $catch
 Seems like this cannot be process.
 $error[message]
+$stop
 $endtry
 
 $if[$httpResult[data;type;alt]==inactive_queue]

@@ -12,12 +12,9 @@ $var[configMusic;$getServerVar[configMusic]]
 $jsonParse[$var[configMusic]]
 $botTyping
 
+$async[kf1]
 $try
 $httpGet[$getVar[apiDomain]/music/where?token=$var[token]&guildId=$guildID&authorId=$authorID]
-$catch
-Seems like this cannot be process.
-$error[message]
-$endtry
 
 $if[$httpResult[data;author]==]
 You must be on voice channel.
@@ -28,25 +25,81 @@ $if[$and[$httpResult[data;data;0;client]!=;$httpResult[data;data;0;sameChannel]!
 You must be on same voice channel in <#$httpResult[data;data;0;client;id]>.
 $stop
 $endif
+$catch
+Seems like this cannot be process.
+$error[message]
+$stop
+$endtry
+$endasync
+$await[kf1]
 
 $c[Default Config Music]
-$var[247;$json[247]] $c[Always stay on voice channel if its true. for toggle this run: <prefix>247]
+$var[247;$json[247]] $c[Always stay on voice channel if this set to true. for toggle this run: <prefix>247]
 $var[platform;$json[platform]] $c[Search provider: youtube, youtubemusic, soundcloud, spotify, applemusic, deezer, tidal]
 $var[fallbackMetadata;true] $c[Re-attempt play from different source]
-$var[vcStatus;true] $c[Show status content playing on voice channel if its true]
+
+$c[Show status content playing on voice channel]
+$var[vcStatus-status-start;$json[vcstatus;0]]
+$var[vcStatus-status-end;$json[vcstatus;1]]
 $var[vcStatus-start;🎵 {author} - {title}] $c[trackStart event status]
 $var[vcStatus-end;🌃 Idling...] $c[queueEnd event status, only shows with 247 enabled]
+
+$c[
+Embed JSON builder: https://www.discordutils.com/embed
+
+(Experimental feature)
+Send custom message each event fires,
+and no you can't combine with expression functions, including bdfd functions.
+]
+$var[messageStatus-status-start;$json[messagestatus;0]]
+$var[messageStatus-status-end;$json[messagestatus;1]]
+
+$c[trackStart message event]
+$var[messageStatus-start;{"embeds":[{"title":"{title}","url":"{url}","color":10526719,"author":{"name":"Now Playing"},"fields":[{"name":"Requested By","value":"<@{requestedBy}>","inline":true},{"name":"Duration","value":"{duration}","inline":true},{"name":"Source","value":"{source}","inline":true},{"name":"Loop","value":"{loop}","inline":true},{"name":"Volume","value":"{volume}%","inline":true}\],"thumbnail":{"url":"{thumbnail}"},"footer":{"text":"{requester.globalName}","icon_url":"{requester.avatar}"},"timestamp":"{currentTimestamp}"}\]}]
+
+$c[queueEnd message event, only sent with 247 enabled]
+$var[messageStatus-end;{"embeds":[{"title":"Queue Ended","description":"Nothing is playing yet.","color":10526719,"timestamp":"{currentTimestamp}"}\]}]
+
+$if[$var[messageStatus-status-start]==true]
+$try
+$httpGet[$getVar[apiDomain]/music/messageStatus?token=$var[token]&guildId=$guildID&channelId=$channelID&type=trackStart&status=true&content=$url[Encode;$var[messageStatus-start]]]
+$catch
+$endtry
+$endif
 
 $try
 $httpGet[$getVar[apiDomain]/music/play?token=$var[token]&q=$var[query]&guildId=$guildID&authorId=$authorID&platform=$var[platform]&247=$var[247]&fallback=$var[fallback]]
 $catch
 Seems like this cannot be process.
 $error[message]
+$stop
 $endtry
 
 $if[$httpResult[data;status]==true]
 $if[$httpResult[data;data;isNewPlayer]==true]
 
+$if[$var[vcStatus-status-start]==true]
+$try
+$httpGet[$getVar[apiDomain]/music/voiceStatus?token=$var[token]&guildId=$guildID&type=trackStart&status=true&content=$url[Encode;$var[vcStatus-start]]]
+$catch
+$endtry
+$endif
+
+$if[$and[$var[vcStatus-status-end]==true;$var[247]==true]==true]
+$try
+$httpGet[$getVar[apiDomain]/music/voiceStatus?token=$var[token]&guildId=$guildID&type=queueEnd&status=true&content=$url[Encode;$var[vcStatus-end]]]
+$catch
+$endtry
+$endif
+
+$if[$and[$var[messageStatus-status-end]==true;$var[247]==true]==true]
+$try
+$httpGet[$getVar[apiDomain]/music/messageStatus?token=$var[token]&guildId=$guildID&channelId=$channelID&type=queueEnd&status=true&content=$url[Encode;$var[messageStatus-end]]]
+$catch
+$endtry
+$endif
+
+$if[$var[messageStatus-status-start]!=true]
 $if[$httpResult[data;data;is247]==true]
 $author[Now Playing - 24/7]
 $else
@@ -62,20 +115,6 @@ $thumbnail[$httpResult[data;data;thumbnail]]
 $addField[Duration;$httpResult[data;data;duration];true]
 $addField[Loop;$httpResult[data;data;loop];true]
 $addField[Volume;$httpResult[data;data;volume]%;true]
-
-$if[$var[vcStatus]==true]
-$try
-$httpGet[$getVar[apiDomain]/music/voiceStatus?token=$var[token]&guildId=$guildID&type=trackStart&status=true&content=$url[Encode;$var[vcStatus-start]]]
-$catch
-$endtry
-
-$if[$var[247]==true]
-$try
-$httpGet[$getVar[apiDomain]/music/voiceStatus?token=$var[token]&guildId=$guildID&type=queueEnd&status=true&content=$url[Encode;$var[vcStatus-end]]]
-$catch
-$endtry
-$endif
-
 $endif
 
 $else
@@ -95,8 +134,8 @@ $thumbnail[$httpResult[data;data;thumbnail]]
 $addField[Duration;$httpResult[data;data;duration];true]
 $addField[Loop;$httpResult[data;data;loop];true]
 $addField[Volume;$httpResult[data;data;volume]%;true]
-
 $endif
+
 $else
 $httpResult[data;message]
 $httpResult[error;message]
