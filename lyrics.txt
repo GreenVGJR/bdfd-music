@@ -33,11 +33,11 @@ $stop
 $endtry
 
 $if[$httpResult[data;type;primary]==final]
-$author[Lyrics - $httpResult[data;data;track;title]]
+$author[Lyrics - $httpResult[data;data;title]]
 $color[$var[colorEmbed]]
 $description[$httpResult[data;data;lyrics]]
 $footer[$httpResult[data;data;progress;current;label] / $httpResult[data;data;progress;total;label]]
-$thumbnail[$httpResult[data;data;track;thumbnail]]
+$thumbnail[$httpResult[data;data;thumbnail]]
 $else
 $httpResult[data;message]
 $httpResult[error;message]

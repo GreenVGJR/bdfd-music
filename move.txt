@@ -1,6 +1,6 @@
 $nomention
 
-$onlyIf[$and[$isNumber[$noMentionMessage[1]]==true;$isNumber[$noMentionMessage[2]]==true];Usage: `$commandTrigger <from> <to>`]
+$onlyIf[$and[$isNumber[$noMentionMessage[1]]==true;$isNumber[$noMentionMessage[2]]==true]!=false;Usage: `$commandTrigger <from> <to>`]
 
 $var[token;$getVar[botToken]]
 $var[from;$sub[$noMentionMessage[1];1]]

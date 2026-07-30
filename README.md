@@ -1,8 +1,11 @@
 License: [Unlicense](LICENSE)<br>
-Music Player: Lavalink (`Serenetia, Jirayu, Kasawa, Localhost`)<br><br>
+Music Player: Lavalink (`Serenetia, Jirayu, Kasawa, Millo, Localhost`)<br><br>
 If you have any questions, [open a issue](https://github.com/GreenVGJR/bdfd-music/issues) or dm me on Discord.
 <br><br>
 Prefix only for commands. Idrk with bdfd stuff
+
+### Languages
+BDScript 2
 
 ### Default Variables
 - botToken<br>
